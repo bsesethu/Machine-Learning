@@ -24,11 +24,11 @@ print(df.head())
 print('\nNumber of rows initially:', df.shape[0])
 
 # Clean
-df1 = df.dropna()
-print('\nNum of rows after dropna:', df1.shape[0])
+df2 = df.dropna()
+print('\nNum of rows after dropna:', df2.shape[0])
 
-df2 = df1.drop_duplicates()
-print('\nNum of rows after drop duplicates:', df2.shape[0])
+# df2 = df1.drop_duplicates()
+# print('\nNum of rows after drop duplicates:', df2.shape[0])
 
 # Clean the data to be safe
 df2['class'] = df2['class'].str.strip().str.lower()
@@ -42,7 +42,7 @@ ax.bar(x= counts.index, height= counts.values)
 ax.set_title('ham vs spam emails')
 ax.set_xlabel('class')
 ax.set_ylabel('frequency')
-# plt.show()
+plt.show()
 
 
 # Cleaning, removing punctuation
@@ -94,7 +94,7 @@ print(df_kleen.head(15))
     # Split test-train
 X_train, X_test,  y_train, y_test = train_test_split(df_kleen['text'], # Features
                                                      df_kleen['class'], # Target
-                                                     test_size= 30, # 30% test 70% train
+                                                     test_size= 2, # 2% test 98% train Because test data is not going to be used at all in the models
                                                      random_state= 42,
                                                      shuffle= True, # shuffle data before it's split
                                                      stratify= df_kleen['class'] 
@@ -114,10 +114,11 @@ kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1) # With Stratified
 
 scoring = ['accuracy', 'f1_macro', 'recall_macro', 'precision_macro']
 
+print('\n')
 #  iterative loop print metrics from each model
 for model in models:
-    model_name = model.__class__.__name__
-    result = cross_validate(model, X_train_vectorized, y_train, cv=kf, scoring=scoring)
+    model_name = model.__class__.__name__ # Intersting, getting the model name
+    result = cross_validate(model, X_train_vectorized, y_train, cv=kf, scoring=scoring) #NOTE cross_validate trains and validates the training just like that, in one line of code.
     print("%s: Mean Accuracy = %.2f%%; Mean F1-macro = %.2f%%; Mean recall-macro = %.2f%%; Mean precision-macro = %.2f%%" 
           % (model_name, 
              result['test_accuracy'].mean()*100, 
@@ -125,5 +126,6 @@ for model in models:
              result['test_recall_macro'].mean()*100, 
              result['test_precision_macro'].mean()*100))
     
-    # Continue Later. 
+print('\nLinearSVC models performs the best.')
+# FIN. Models perform nearly perfectly
 
